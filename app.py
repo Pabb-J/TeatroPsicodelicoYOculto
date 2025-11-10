@@ -2,14 +2,14 @@
 import mysql.connector
 
 app = Flask(__name__)
-app.secret_key = 'clave_secreta_segura'
+app.secret_key = 'Seminario2025'
 
 # Conexión a InfinityFree
 db = mysql.connector.connect(
-    host="sqlXXX.infinityfree.com",  # ← reemplazá con tu host
-    user="tu_usuario",               # ← tu usuario InfinityFree
-    password="tu_contraseña",        # ← tu contraseña InfinityFree
-    database="tu_base_de_datos"      # ← nombre de tu base
+    host="sql100.infinityfree.com",  # ← reemplazá con tu host
+    user="if0_40374899",               # ← tu usuario InfinityFree
+    password="Seminario2025",        # ← tu contraseña InfinityFree
+    database="if0_40374899_if0_40374899_teatroCreativo"# ← nombre de tu base
 )
 cursor = db.cursor()
 
