@@ -8,7 +8,7 @@ def conectar_db():
     return pymysql.connect(
         host='25pabb.mysql.pythonanywhere-services.com',
         user='25pabb',
-        password='Gladiadore7777',
+        password='Teatro2025!',
         db='25pabb$teatrobd',
         cursorclass=pymysql.cursors.DictCursor
     )
@@ -22,6 +22,74 @@ obras = [
     {'id': 2, 'titulo': 'La Casa de Bernarda Alba', 'descripcion': 'Drama de Lorca', 'precio': 400},
     {'id': 3, 'titulo': 'El Fantasma de la Ópera', 'descripcion': 'Musical clásico', 'precio': 600}
 ]
+
+@app.route('/mis_compras')
+def mis_compras():
+    if 'username' not in session:
+        flash('Debés iniciar sesión para ver tus compras.')
+        return redirect(url_for('login'))
+
+    usuario = session['username']
+
+    conn = conectar_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT e.id, o.titulo AS obra, e.cantidad, e.fecha, (e.cantidad * o.precio) AS total
+        FROM entradas e
+        JOIN obras o ON e.obra_id = o.id
+        WHERE e.usuario = %s
+    """, (usuario,))
+    compras = cursor.fetchall()
+    total_gastado = sum(compra['total'] for compra in compras)
+    cursor.close()
+    conn.close()
+
+    return render_template('mis_compras.html', compras=compras, total_gastado=total_gastado)
+
+@app.route('/comprar/<int:obra_id>', methods=['POST'])
+def comprar(obra_id):
+    if 'username' not in session:
+        flash('Debés iniciar sesión para comprar entradas.')
+        return redirect(url_for('login'))
+
+    usuario = session['username']
+    cantidad = int(request.form.get('cantidad', 1))
+
+    conn = conectar_db()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO entradas (usuario, obra_id, cantidad) VALUES (%s, %s, %s)",
+        (usuario, obra_id, cantidad)
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash('Compra realizada con éxito.')
+    return redirect(url_for('teatro'))
+
+@app.route('/eliminar_compra/<int:compra_id>', methods=['POST'])
+def eliminar_compra(compra_id):
+    if 'username' not in session:
+        flash('Debés iniciar sesión para eliminar compras.')
+        return redirect(url_for('login'))
+
+    usuario = session['username']
+
+    conn = conectar_db()
+    cursor = conn.cursor()
+
+    # Eliminar solo si la compra pertenece al usuario logueado
+    cursor.execute("DELETE FROM entradas WHERE id = %s AND usuario = %s", (compra_id, usuario))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    flash('Compra eliminada correctamente.')
+    return redirect(url_for('mis_compras'))
 
 @app.route('/')
 def home():
@@ -66,32 +134,30 @@ def login():
     return render_template('login.html')
 
 
-
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
 
-        # Conexión a la base
+        if not username or not email or not password:
+            flash('Completá todos los campos.')
+            return redirect(url_for('registro'))
+
         conn = conectar_db()
         cursor = conn.cursor()
 
-        # Verificar si el usuario ya existe
-        cursor.execute("SELECT * FROM usuarios WHERE username = %s", (username,))
+        # Validar existencia por username o email
+        cursor.execute("SELECT id FROM usuarios WHERE username = %s OR email = %s", (username, email))
         existente = cursor.fetchone()
-
         if existente:
-            flash('El usuario ya existe.')
+            flash('El usuario o el email ya están registrados.')
             cursor.close()
             conn.close()
             return redirect(url_for('registro'))
 
-        # Hashear la contraseña
         password_segura = generate_password_hash(password)
-
-        # Insertar nuevo usuario
         cursor.execute(
             "INSERT INTO usuarios (username, email, password) VALUES (%s, %s, %s)",
             (username, email, password_segura)

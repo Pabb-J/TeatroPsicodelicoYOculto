@@ -90,8 +90,20 @@
 
             <button type="submit">Crear Cuenta</button>
         </form>
-        <div class="login-link">
-            ¿Ya tenés cuenta? <a href="/login">Iniciá sesión aquí</a>
+
+        <div class="container mt-3">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-info" role="alert">
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="mt-2">
+            <small>¿Ya tenés cuenta? <a href="{{ url_for('login') }}">Iniciá sesión</a></small>
         </div>
     </div>
 

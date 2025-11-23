@@ -199,6 +199,18 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    {% if session['username'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('mis_compras') }}">Mis Compras</a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link disabled text-light">Bienvenido, {{ session['username'] }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Cerrar sesión</a>
+                    </li>
+                    {% endif %}
+
                     <li class="nav-item">
                         <a class="nav-link" href="#inicio">Inicio</a>
                     </li>
@@ -211,14 +223,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#contacto">Contacto</a>
                     </li>
-                    {% if session['username'] %}
-                    <li class="nav-item">
-                        <span class="nav-link disabled text-light">Bienvenido, {{ session['username'] }}</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">Cerrar sesión</a>
-                    </li>
-                    {% endif %}
                 </ul>
 
             </div>
@@ -243,6 +247,15 @@
                 <h2>Obras en Cartelera</h2>
                 <p class="text-muted">Descubre nuestra selección de espectáculos</p>
             </div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-success text-center" role="alert">
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
 
             <div class="row">
                 <div class="col-lg-4 col-md-6">
@@ -251,15 +264,21 @@
                             <i class="fas fa-masks-theater"></i>
                         </div>
                         <div class="obra-content">
-                            <h3 class="obra-title">Romeo y Julieta</h3>
+                            <h3 class="obra-title">Hamlet</h3>
                             <p class="obra-date">
                                 <i class="fas fa-calendar me-2"></i>Viernes y Sábados 21:00hs
                             </p>
                             <p class="obra-price">Desde $2.500</p>
                             <p class="text-muted">Una adaptación contemporánea del clásico de Shakespeare que no te puedes perder.</p>
-                            <button class="btn btn-custom w-100">
-                                <i class="fas fa-shopping-cart me-2"></i>Comprar Entradas
-                            </button>
+                            <form action="{{ url_for('comprar', obra_id=1) }}" method="post">
+                                <div class="mb-2">
+                                    <label for="cantidad1" class="form-label">Cantidad:</label>
+                                    <input type="number" id="cantidad1" name="cantidad" value="1" min="1" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-custom w-100">
+                                    <i class="fas fa-shopping-cart me-2"></i>Comprar Entradas
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -276,9 +295,15 @@
                             </p>
                             <p class="obra-price">Desde $3.200</p>
                             <p class="text-muted">Un musical espectacular que combina romance, misterio y música extraordinaria.</p>
-                            <button class="btn btn-custom w-100">
-                                <i class="fas fa-shopping-cart me-2"></i>Comprar Entradas
-                            </button>
+                            <form action="{{ url_for('comprar', obra_id=2) }}" method="post">
+                                <div class="mb-2">
+                                    <label for="cantidad2" class="form-label">Cantidad:</label>
+                                    <input type="number" id="cantidad2" name="cantidad" value="1" min="1" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-custom w-100">
+                                    <i class="fas fa-shopping-cart me-2"></i>Comprar Entradas
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -295,9 +320,15 @@
                             </p>
                             <p class="obra-price">Desde $2.000</p>
                             <p class="text-muted">Un drama intenso de Federico García Lorca interpretado magistralmente.</p>
-                            <button class="btn btn-custom w-100">
-                                <i class="fas fa-shopping-cart me-2"></i>Comprar Entradas
-                            </button>
+                            <form action="{{ url_for('comprar', obra_id=3) }}" method="post">
+                                <div class="mb-2">
+                                    <label for="cantidad3" class="form-label">Cantidad:</label>
+                                    <input type="number" id="cantidad3" name="cantidad" value="1" min="1" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-custom w-100">
+                                    <i class="fas fa-shopping-cart me-2"></i>Comprar Entradas
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

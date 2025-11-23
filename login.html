@@ -87,8 +87,19 @@
 
             <button type="submit">Entrar</button>
         </form>
-        <div class="register-link">
-            ¿No tenés cuenta? <a href="/registro">Registrate aquí</a>
+        <div class="container mt-3">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-info" role="alert">
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="mt-2">
+            <small>¿No tenés cuenta? <a href="{{ url_for('registro') }}">Registrate aquí</a></small>
         </div>
     </div>
 

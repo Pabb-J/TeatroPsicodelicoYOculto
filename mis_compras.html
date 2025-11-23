@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Compras - Teatro Creativo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #8B0000;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>Mis Compras</h2>
+
+    {% if compras %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Obra</th>
+            <th>Cantidad</th>
+            <th>Fecha</th>
+            <th>Total</th>
+        </tr>
+        {% for compra in compras %}
+        <tr>
+            <td>{{ compra.id }}</td>
+            <td>{{ compra.obra }}</td>
+            <td>{{ compra.cantidad }}</td>
+            <td>{{ compra.fecha }}</td>
+            <td>${{ compra.total }}</td>
+            <td>
+                <form action="{{ url_for('eliminar_compra', compra_id=compra.id) }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+
+        {% endfor %}
+    </table>
+
+    <p style="text-align:center; font-weight:bold; margin-top:15px;">
+        Total gastado: ${{ total_gastado }}
+    </p>
+    {% else %}
+    <p style="text-align:center;">Todavía no compraste ninguna entrada.</p>
+    {% endif %}
+
+    <div class="back-link">
+        <a href="{{ url_for('teatro') }}">Volver a las obras</a>
+    </div>
+</body>
+</html>
